@@ -1,6 +1,7 @@
 import type { ApiResponse } from './types'
 
-const STORAGE_KEY = 'db-admin-token'
+const ACCESS_TOKEN_KEY = 'db-admin-token'
+const REFRESH_TOKEN_KEY = 'db-admin-refresh-token'
 
 // This app runs as its own standalone service now, calling the backend as a remote API (the backend
 // has CORS configured for this origin) rather than being bundled and served from the backend's own
@@ -15,24 +16,44 @@ const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? '').replace(/\/+$/, '
 // this in after mount is a real race: React commits child effects before parent effects, so a page
 // refresh could fire a child's data fetch before AuthProvider's effect ever runs, sending that
 // request with no Authorization header and triggering a spurious "session expired" logout.
-let authToken: string | null = sessionStorage.getItem(STORAGE_KEY)
+let authToken: string | null = sessionStorage.getItem(ACCESS_TOKEN_KEY)
+let refreshToken: string | null = sessionStorage.getItem(REFRESH_TOKEN_KEY)
 let onUnauthorized: (() => void) | null = null
+// AuthContext's React state is only ever set explicitly (login/register/logout/onUnauthorized) — a
+// silent refresh happening deep inside apiRequest has no other way to tell it the access token (and
+// therefore the decoded role/email) changed, so without this the UI can keep showing a stale role
+// after a refresh even though every actual API call is using the fresh token correctly.
+let onTokensRefreshed: ((accessToken: string) => void) | null = null
+
+// Shared by concurrent requests that all 401 around the same time, so a burst of calls triggers
+// exactly one /auth/refresh instead of one per request.
+let refreshInFlight: Promise<boolean> | null = null
 
 export function getStoredAuthToken(): string | null {
   return authToken
 }
 
-export function setAuthToken(token: string | null): void {
-  authToken = token
-  if (token) {
-    sessionStorage.setItem(STORAGE_KEY, token)
+export function setAuthTokens(accessToken: string | null, newRefreshToken: string | null): void {
+  authToken = accessToken
+  refreshToken = newRefreshToken
+  if (accessToken) {
+    sessionStorage.setItem(ACCESS_TOKEN_KEY, accessToken)
   } else {
-    sessionStorage.removeItem(STORAGE_KEY)
+    sessionStorage.removeItem(ACCESS_TOKEN_KEY)
+  }
+  if (newRefreshToken) {
+    sessionStorage.setItem(REFRESH_TOKEN_KEY, newRefreshToken)
+  } else {
+    sessionStorage.removeItem(REFRESH_TOKEN_KEY)
   }
 }
 
 export function setUnauthorizedHandler(handler: () => void): void {
   onUnauthorized = handler
+}
+
+export function setTokensRefreshedHandler(handler: (accessToken: string) => void): void {
+  onTokensRefreshed = handler
 }
 
 export class ApiClientError extends Error {
@@ -51,7 +72,34 @@ interface RequestOptions {
   body?: unknown
 }
 
-export async function apiRequest<T>(path: string, options: RequestOptions = {}): Promise<T> {
+// Plain fetch, not apiRequest — this must never itself trigger the 401-retry-via-refresh logic
+// below (that would recurse forever if the refresh token has also expired).
+async function tryRefreshAccessToken(): Promise<boolean> {
+  if (!refreshToken) {
+    return false
+  }
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/v1/auth/refresh`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ refreshToken }),
+    })
+    if (!response.ok) {
+      return false
+    }
+    const envelope = (await response.json()) as ApiResponse<{ accessToken: string; refreshToken: string }>
+    if (!envelope.success || !envelope.data) {
+      return false
+    }
+    setAuthTokens(envelope.data.accessToken, envelope.data.refreshToken)
+    onTokensRefreshed?.(envelope.data.accessToken)
+    return true
+  } catch {
+    return false
+  }
+}
+
+export async function apiRequest<T>(path: string, options: RequestOptions = {}, isRetry = false): Promise<T> {
   const headers: Record<string, string> = {}
   if (authToken) {
     headers.Authorization = `Bearer ${authToken}`
@@ -67,6 +115,15 @@ export async function apiRequest<T>(path: string, options: RequestOptions = {}):
   })
 
   if (response.status === 401) {
+    if (!isRetry) {
+      refreshInFlight ??= tryRefreshAccessToken().finally(() => {
+        refreshInFlight = null
+      })
+      const refreshed = await refreshInFlight
+      if (refreshed) {
+        return apiRequest<T>(path, options, true)
+      }
+    }
     onUnauthorized?.()
     throw new ApiClientError('Session expired, log in again.', 'UNAUTHORIZED', 401)
   }

@@ -1,7 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import type { ReactNode } from 'react'
 import { login as loginRequest, register as registerRequest } from '../api/auth'
-import { getStoredAuthToken, setAuthToken, setUnauthorizedHandler } from '../api/client'
+import { getStoredAuthToken, setAuthTokens, setTokensRefreshedHandler, setUnauthorizedHandler } from '../api/client'
 import { decodeJwt } from './jwt'
 
 interface AuthState {
@@ -37,26 +37,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<AuthState>(() => stateFromToken(getStoredAuthToken()))
 
   const logout = useCallback(() => {
-    setAuthToken(null)
+    setAuthTokens(null, null)
     setState((prev) => ({ token: null, email: null, isAdmin: false, sessionExpired: prev.sessionExpired }))
   }, [])
 
   useEffect(() => {
     setUnauthorizedHandler(() => {
-      setAuthToken(null)
+      setAuthTokens(null, null)
       setState({ token: null, email: null, isAdmin: false, sessionExpired: true })
+    })
+    setTokensRefreshedHandler((accessToken) => {
+      setState(stateFromToken(accessToken))
     })
   }, [])
 
   const login = useCallback(async (email: string, password: string) => {
     const response = await loginRequest(email, password)
-    setAuthToken(response.accessToken)
+    setAuthTokens(response.accessToken, response.refreshToken)
     setState(stateFromToken(response.accessToken))
   }, [])
 
   const register = useCallback(async (email: string, password: string) => {
     const response = await registerRequest(email, password)
-    setAuthToken(response.accessToken)
+    setAuthTokens(response.accessToken, response.refreshToken)
     setState(stateFromToken(response.accessToken))
   }, [])
 

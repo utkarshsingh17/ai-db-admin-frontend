@@ -15,6 +15,7 @@ export interface ApiResponse<T> {
 
 export interface AuthResponseDto {
   accessToken: string
+  refreshToken: string
   tokenType: string
 }
 
