@@ -1,0 +1,49 @@
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--radius);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.low {
+  color: var(--state-low);
+  background: var(--state-low-bg);
+}
+.low .dot {
+  background: var(--state-low);
+}
+
+.medium {
+  color: var(--state-medium);
+  background: var(--state-medium-bg);
+}
+.medium .dot {
+  background: var(--state-medium);
+}
+
+.high {
+  color: var(--state-high);
+  background: var(--state-high-bg);
+}
+.high .dot {
+  background: var(--state-high);
+}
+
+.neutral {
+  color: var(--state-neutral);
+  background: var(--state-neutral-bg);
+}
+.neutral .dot {
+  background: var(--state-neutral);
+}

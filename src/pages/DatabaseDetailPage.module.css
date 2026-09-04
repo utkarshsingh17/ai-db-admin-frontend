@@ -1,0 +1,86 @@
+.back {
+  display: inline-block;
+  margin-bottom: var(--space-4);
+  color: var(--ink-muted);
+  font-size: var(--text-sm);
+  text-decoration: none;
+}
+
+.back:hover {
+  color: var(--accent);
+}
+
+.meta {
+  display: flex;
+  gap: var(--space-6);
+  margin-bottom: var(--space-8);
+  color: var(--ink-muted);
+  font-size: var(--text-sm);
+}
+
+.metaValue {
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+}
+
+.metricsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-4);
+  margin-bottom: var(--space-8);
+}
+
+.metricCard {
+  padding: var(--space-4);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.metricLabel {
+  font-size: var(--text-xs);
+  color: var(--ink-muted);
+  margin-bottom: var(--space-1);
+}
+
+.metricValue {
+  font-size: var(--text-lg);
+  font-weight: 600;
+  font-family: var(--font-mono);
+}
+
+.sectionTitle {
+  margin-bottom: var(--space-4);
+}
+
+.markForm {
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-end;
+  margin-bottom: var(--space-4);
+  padding: var(--space-4);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.label {
+  font-size: var(--text-xs);
+  color: var(--ink-muted);
+}
+
+.select {
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  background: var(--bg);
+  color: var(--ink);
+  min-width: 12rem;
+}

@@ -1,0 +1,12 @@
+.block {
+  margin: 0;
+  padding: var(--space-4);
+  background: var(--ink);
+  color: var(--bg);
+  border-radius: var(--radius);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  line-height: var(--leading-relaxed);
+  overflow-x: auto;
+  white-space: pre;
+}

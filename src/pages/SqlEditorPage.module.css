@@ -1,0 +1,166 @@
+.tabs {
+  display: flex;
+  gap: var(--space-1);
+  margin-bottom: var(--space-6);
+  border-bottom: 1px solid var(--border);
+}
+
+.tab {
+  padding: var(--space-2) var(--space-4);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--ink-muted);
+  font-size: var(--text-sm);
+  cursor: pointer;
+}
+
+.tabActive {
+  composes: tab;
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+  font-weight: 500;
+}
+
+.toolbar {
+  display: flex;
+  gap: var(--space-3);
+  align-items: center;
+  margin-bottom: var(--space-4);
+}
+
+.askRow {
+  display: flex;
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
+}
+
+.askInput {
+  flex: 1;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--ink);
+  font-size: var(--text-base);
+}
+
+.explanation {
+  color: var(--ink-muted);
+  font-size: var(--text-sm);
+  margin-bottom: var(--space-4);
+}
+
+.generatedSqlLabel {
+  font-size: var(--text-xs);
+  color: var(--ink-muted);
+  margin-bottom: var(--space-2);
+}
+
+.select {
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--ink);
+  min-width: 16rem;
+}
+
+.textarea {
+  width: 100%;
+  min-height: 8rem;
+  padding: var(--space-4);
+  background: var(--ink);
+  color: var(--bg);
+  border: none;
+  border-radius: var(--radius);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  line-height: var(--leading-relaxed);
+  resize: vertical;
+  margin-bottom: var(--space-4);
+}
+
+.textarea:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.actions {
+  display: flex;
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
+}
+
+.error {
+  padding: var(--space-4);
+  margin-bottom: var(--space-6);
+  background: var(--state-high-bg);
+  color: var(--state-high);
+  border-radius: var(--radius);
+  font-size: var(--text-sm);
+  font-family: var(--font-mono);
+  white-space: pre-wrap;
+}
+
+.meta {
+  color: var(--ink-muted);
+  font-size: var(--text-xs);
+  margin-bottom: var(--space-3);
+}
+
+.resultsWrap {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.submitForm {
+  margin-top: var(--space-2);
+  margin-bottom: var(--space-6);
+  padding: var(--space-4);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+
+.fullWidth {
+  grid-column: 1 / -1;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.label {
+  font-size: var(--text-xs);
+  color: var(--ink-muted);
+}
+
+.input,
+.textInput {
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  background: var(--bg);
+  color: var(--ink);
+}
+
+.success {
+  padding: var(--space-4);
+  margin-bottom: var(--space-6);
+  background: var(--state-low-bg);
+  color: var(--state-low);
+  border-radius: var(--radius);
+  font-size: var(--text-sm);
+}
+
+.success a {
+  color: inherit;
+  font-weight: 600;
+}

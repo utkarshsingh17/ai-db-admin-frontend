@@ -1,0 +1,39 @@
+.header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: var(--space-6);
+}
+
+.actions {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.primaryButton {
+  padding: var(--space-2) var(--space-4);
+  background: var(--accent);
+  color: var(--surface);
+  border: none;
+  border-radius: var(--radius);
+  font-size: var(--text-sm);
+  font-weight: 500;
+}
+
+.primaryButton:hover:not(:disabled) {
+  background: var(--accent-hover);
+}
+
+.secondaryButton {
+  padding: var(--space-2) var(--space-4);
+  background: transparent;
+  color: var(--ink);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  font-size: var(--text-sm);
+}
+
+.secondaryButton:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent);
+}

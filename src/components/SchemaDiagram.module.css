@@ -1,0 +1,26 @@
+.wrap {
+  overflow-x: auto;
+  padding: var(--space-4);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.wrap :global(svg) {
+  display: block;
+  margin: 0 auto;
+}
+
+.empty {
+  padding: var(--space-8);
+  text-align: center;
+  color: var(--ink-muted);
+  font-size: var(--text-sm);
+}
+
+.error {
+  padding: var(--space-4);
+  color: var(--state-high);
+  font-size: var(--text-sm);
+  font-family: var(--font-mono);
+}
