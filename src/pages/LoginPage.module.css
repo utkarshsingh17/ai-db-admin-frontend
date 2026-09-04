@@ -81,3 +81,15 @@
   border-radius: var(--radius);
   font-size: var(--text-sm);
 }
+
+.footer {
+  margin-top: var(--space-6);
+  text-align: center;
+  font-size: var(--text-sm);
+  color: var(--ink-muted);
+}
+
+.link {
+  color: var(--accent);
+  font-weight: 500;
+}

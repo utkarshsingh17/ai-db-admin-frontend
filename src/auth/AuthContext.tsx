@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import type { ReactNode } from 'react'
-import { login as loginRequest } from '../api/auth'
+import { login as loginRequest, register as registerRequest } from '../api/auth'
 import { getStoredAuthToken, setAuthToken, setUnauthorizedHandler } from '../api/client'
 import { decodeJwt } from './jwt'
 
@@ -13,6 +13,7 @@ interface AuthState {
 
 interface AuthContextValue extends AuthState {
   login: (email: string, password: string) => Promise<void>
+  register: (email: string, password: string) => Promise<void>
   logout: () => void
   dismissSessionExpired: () => void
 }
@@ -53,13 +54,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setState(stateFromToken(response.accessToken))
   }, [])
 
+  const register = useCallback(async (email: string, password: string) => {
+    const response = await registerRequest(email, password)
+    setAuthToken(response.accessToken)
+    setState(stateFromToken(response.accessToken))
+  }, [])
+
   const dismissSessionExpired = useCallback(() => {
     setState((prev) => ({ ...prev, sessionExpired: false }))
   }, [])
 
   const value = useMemo<AuthContextValue>(
-    () => ({ ...state, login, logout, dismissSessionExpired }),
-    [state, login, logout, dismissSessionExpired],
+    () => ({ ...state, login, register, logout, dismissSessionExpired }),
+    [state, login, register, logout, dismissSessionExpired],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
