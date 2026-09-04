@@ -5,7 +5,10 @@ const STORAGE_KEY = 'db-admin-token'
 // This app runs as its own standalone service now, calling the backend as a remote API (the backend
 // has CORS configured for this origin) rather than being bundled and served from the backend's own
 // origin — so every request needs an absolute base URL instead of a same-origin relative path.
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? ''
+// Strip any trailing slash — a URL like ".../onrender.com/" concatenated with a "/api/..." path
+// produces a double slash that doesn't match the backend's route patterns and gets rejected before
+// CORS headers are even added, which the browser then misreports as a CORS failure.
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? '').replace(/\/+$/, '')
 
 // Read synchronously at module load — before React renders anything — so the token is already in
 // place for the very first API call a mounting component might fire. Relying on a useEffect to push
