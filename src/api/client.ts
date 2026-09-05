@@ -9,7 +9,7 @@ const REFRESH_TOKEN_KEY = 'db-admin-refresh-token'
 // Strip any trailing slash — a URL like ".../onrender.com/" concatenated with a "/api/..." path
 // produces a double slash that doesn't match the backend's route patterns and gets rejected before
 // CORS headers are even added, which the browser then misreports as a CORS failure.
-const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? '').replace(/\/+$/, '')
+export const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? '').replace(/\/+$/, '')
 
 // Read synchronously at module load — before React renders anything — so the token is already in
 // place for the very first API call a mounting component might fire. Relying on a useEffect to push
